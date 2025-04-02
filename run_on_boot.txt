@@ -1,0 +1,156 @@
+Let's set up your **Raspberry Pi 4B** to run your navigation system on boot using **systemd**. Follow these steps carefully:
+
+---
+
+## **1️⃣ Create a systemd Service File**
+1. Open the terminal on your Raspberry Pi.
+
+2. Create a new service file using `nano`:
+   ```bash
+   sudo nano /etc/systemd/system/navigation_device.service
+   ```
+
+3. Copy and paste the following content into the file:  
+   ```ini
+[Unit]
+Description=Navigation Device for Visually Impaired
+After=network.target
+
+[Service]
+ExecStart=/home/aiguide/yolov8_env/bin/python3 /home/aiguide/Documents/main.py
+WorkingDirectory=/home/aiguide/Documents
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=aiguide
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/aiguide/.Xauthority
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:>
+
+[Install]
+WantedBy=multi-user.target
+   ```
+
+   **Note:**  
+   - Replace `/home/pi/navigation/main.py` with the actual path of your script.
+   - `Restart=always` ensures it automatically restarts if it crashes.
+   - `User=pi` ensures it runs under the correct user.
+
+4. **Save the file:**  
+   - Press `CTRL + X`, then `Y`, then `Enter`.
+
+---
+
+## **2️⃣ Reload systemd to Apply Changes**
+Run the following command to reload systemd and recognize your new service:
+```bash
+sudo systemctl daemon-reload
+```
+
+---
+
+## **3️⃣ Enable and Start the Service**
+### **✔️ Enable the service to start on boot**
+```bash
+sudo systemctl enable navigation_device.service
+```
+
+### **✔️ Start the service immediately**
+```bash
+sudo systemctl start navigation_device.service
+```
+
+### **✔️ Check if the service is running**
+```bash
+sudo systemctl status navigation_device.service
+```
+- If successful, you should see **"Active: running"**.
+- If you see **errors**, let me know so we can debug them.
+
+---
+
+## **4️⃣ Test if it Runs on Boot**
+1. **Reboot the Raspberry Pi**:
+   ```bash
+   sudo reboot
+   ```
+2. After rebooting, check if your program is running:
+   ```bash
+   sudo systemctl status navigation_device.service
+   ```
+   If it’s **not running**, check for errors by running:
+   ```bash
+   journalctl -u navigation_device.service --no-pager
+   ```
+
+---
+
+## **5️⃣ Stopping or Disabling the Service (If Needed)**
+If you ever want to stop or remove the service:
+
+- **Stop the service manually:**
+  ```bash
+  sudo systemctl stop navigation_device.service
+  ```
+- **Disable it from running on boot:**
+  ```bash
+  sudo systemctl disable navigation_device.service
+  ```
+
+---
+
+This setup will ensure your **navigation system starts automatically when the Raspberry Pi boots**. 🚀
+
+Let me know if you need further assistance! 😊
+
+
+
+
+You Can Check If the Service is Running
+
+After reboot, open a terminal and run:
+bash
+sudo systemctl status navigation_device.service
+
+If it's working, you should see:
+sql
+Active: running (since [timestamp])
+
+If there are errors, check logs with:
+bash
+journalctl -u navigation_device.service --no-pager
+
+
+If the System Does Not Start Automatically
+Run:
+bash
+sudo systemctl restart navigation_device.service
+
+If it fails, check for issues in journalctl.
+
+Make sure Python is installed and the script path is correct.
+
+Want to Stop the Script?
+
+You can manually stop it:
+bash
+sudo systemctl stop navigation_device.service
+
+To enable the service:
+sudo systemctl enable navigation_device.service
+
+Or disable it from auto-starting:
+bash
+sudo systemctl disable navigation_device.service
+
+
+
+What if I Want to Modify main.py?
+
+Edit your script as usual:
+bash
+nano /home/pi/navigation/main.py
+
+Restart the service to apply changes:
+bash
+sudo systemctl restart navigation_device.service
