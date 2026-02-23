@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-import config  # ✅ Import stop_threads from config
+import config  
 
 # Sensor 1
 TRIG_1 = 23  # Pin 16
